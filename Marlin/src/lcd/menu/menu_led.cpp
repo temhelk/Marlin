@@ -134,6 +134,10 @@ void menu_led() {
       EDIT_ITEM(bool, MSG_LEDS, &editable.state, leds.toggle);
     }
 
+    #if ENABLED(LED_USER_PRESET_STARTUP)
+      ACTION_ITEM(MSG_SET_LEDS_USER_PRESET, leds.make_default);
+    #endif
+
     #if ENABLED(LED_COLOR_PRESETS)
       ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds.set_default);
     #endif

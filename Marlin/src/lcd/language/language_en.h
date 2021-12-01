@@ -262,6 +262,7 @@ namespace Language_en {
   LSTR MSG_SET_LEDS_VIOLET                = _UxGT("Violet");
   LSTR MSG_SET_LEDS_WHITE                 = _UxGT("White");
   LSTR MSG_SET_LEDS_DEFAULT               = _UxGT("Default");
+  LSTR MSG_SET_LEDS_USER_PRESET           = _UxGT("Make default");
   LSTR MSG_LED_CHANNEL_N                  = _UxGT("Channel =");
   LSTR MSG_LEDS2                          = _UxGT("Lights #2");
   LSTR MSG_NEO2_PRESETS                   = _UxGT("Light #2 Presets");

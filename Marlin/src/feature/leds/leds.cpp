@@ -59,6 +59,10 @@
   bool LEDLights::lights_on;
 #endif
 
+#if ENABLED(LED_USER_PRESET_STARTUP)
+  LEDColor LEDLights::led_user_preset;
+#endif
+
 LEDLights leds;
 
 void LEDLights::setup() {
@@ -72,13 +76,12 @@ void LEDLights::setup() {
   #endif
   TERN_(NEOPIXEL_LED, neo.init());
   TERN_(PCA9533, PCA9533_init());
-  TERN_(LED_USER_PRESET_STARTUP, set_default());
+  TERN_(LED_USER_PRESET_STARTUP, set_white());
 }
 
 void LEDLights::set_color(const LEDColor &incol
   OPTARG(NEOPIXEL_IS_SEQUENTIAL, bool isSequence/*=false*/)
 ) {
-
   #if ENABLED(NEOPIXEL_LED)
 
     const uint32_t neocolor = LEDColorWhite() == incol
@@ -165,6 +168,18 @@ void LEDLights::set_color(const LEDColor &incol
   }
 
 #endif
+
+#if ENABLED(LED_USER_PRESET_STARTUP)
+  void LEDLights::set_default()
+  {
+    set_color(LEDLights::led_user_preset);
+  }
+
+  void LEDLights::make_default()
+  {
+    LEDLights::led_user_preset = LEDLights::color;
+  }
+#endif // ENABLED(LED_USER_PRESET_STARTUP)
 
 #if ENABLED(NEOPIXEL2_SEPARATE)
 

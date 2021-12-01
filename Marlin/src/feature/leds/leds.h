@@ -132,7 +132,12 @@ public:
 
   #if ENABLED(LED_COLOR_PRESETS)
     static const LEDColor defaultLEDColor;
-    static inline void set_default()  { set_color(defaultLEDColor); }
+    #if ENABLED(LED_USER_PRESET_STARTUP)
+      static void make_default();
+      static void set_default();
+    #else
+      static inline void set_default()  { set_color(defaultLEDColor); }
+    #endif
     static inline void set_red()      { set_color(LEDColorRed()); }
     static inline void set_orange()   { set_color(LEDColorOrange()); }
     static inline void set_yellow()   { set_color(LEDColorYellow()); }
@@ -155,6 +160,11 @@ public:
   #endif
   #if EITHER(LED_CONTROL_MENU, CASE_LIGHT_USE_RGB_LED)
     static inline void update() { set_color(color); }
+  #endif
+
+  #if ENABLED(LED_USER_PRESET_STARTUP)
+    // Initialized by settings.load()
+    static LEDColor led_user_preset;
   #endif
 
   #ifdef LED_BACKLIGHT_TIMEOUT

@@ -36,7 +36,7 @@
  */
 
 // Change EEPROM version if the structure changes
-#define EEPROM_VERSION "V85"
+#define EEPROM_VERSION "U85"
 #define EEPROM_OFFSET 100
 
 // Check the integrity of data offsets.
@@ -161,6 +161,10 @@
 #if ENABLED(DGUS_LCD_UI_MKS)
   #include "../lcd/extui/dgus/DGUSScreenHandler.h"
   #include "../lcd/extui/dgus/DGUSDisplayDef.h"
+#endif
+
+#if ENABLED(LED_USER_PRESET_STARTUP)
+  #include "../feature/leds/leds.h"
 #endif
 
 #pragma pack(push, 1) // No padding between variables
@@ -514,6 +518,17 @@ typedef struct SettingsDataStruct {
 
   #if HAS_MULTI_LANGUAGE
     uint8_t ui_language;                                // M414 S
+  #endif
+
+  //
+  // Color of neopixel rgb backlight
+  //
+  #if ENABLED(LED_USER_PRESET_STARTUP)
+    uint8_t led_user_preset_red;
+    uint8_t led_user_preset_green;
+    uint8_t led_user_preset_blue;
+    uint8_t led_user_preset_white;
+    uint8_t led_user_preset_brightness;
   #endif
 
 } SettingsData;
@@ -1468,6 +1483,14 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(ui.language);
     #endif
 
+    #if ENABLED(LED_USER_PRESET_STARTUP)
+      EEPROM_WRITE(LEDLights::led_user_preset.r);
+      EEPROM_WRITE(LEDLights::led_user_preset.g);
+      EEPROM_WRITE(LEDLights::led_user_preset.b);
+      EEPROM_WRITE(TERN(HAS_WHITE_LED, LEDLights::led_user_preset.w, uint8_t(0)));
+      EEPROM_WRITE(TERN(NEOPIXEL_LED, LEDLights::led_user_preset.i, uint8_t(0)));
+    #endif
+
     //
     // Report final CRC and Data Size
     //
@@ -2386,6 +2409,28 @@ void MarlinSettings::postprocess() {
         if (ui_language >= NUM_LANGUAGES) ui_language = 0;
         ui.set_language(ui_language);
       }
+      #endif
+
+      #if ENABLED(LED_USER_PRESET_STARTUP)
+        _FIELD_TEST(led_user_preset_red);
+
+        uint8_t led_user_preset_red;
+        uint8_t led_user_preset_green;
+        uint8_t led_user_preset_blue;
+        uint8_t led_user_preset_white;
+        uint8_t led_user_preset_brightness;
+
+        EEPROM_READ(led_user_preset_red);
+        EEPROM_READ(led_user_preset_green);
+        EEPROM_READ(led_user_preset_blue);
+        EEPROM_READ(led_user_preset_white);
+        EEPROM_READ(led_user_preset_brightness);
+
+        LEDLights::led_user_preset = LEDColor(
+            led_user_preset_red, led_user_preset_green, led_user_preset_blue
+            OPTARG(HAS_WHITE_LED, led_user_preset_white)
+            OPTARG(NEOPIXEL_LED, led_user_preset_brightness)
+        );
       #endif
 
       //
