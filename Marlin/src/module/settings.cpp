@@ -1483,6 +1483,9 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(ui.language);
     #endif
 
+    //
+    // LED backlight color
+    //
     #if ENABLED(LED_USER_PRESET_STARTUP)
       EEPROM_WRITE(LEDLights::led_user_preset.r);
       EEPROM_WRITE(LEDLights::led_user_preset.g);
@@ -2411,6 +2414,9 @@ void MarlinSettings::postprocess() {
       }
       #endif
 
+      //
+      // LED backlight color
+      //
       #if ENABLED(LED_USER_PRESET_STARTUP)
         _FIELD_TEST(led_user_preset_red);
 
@@ -3116,6 +3122,17 @@ void MarlinSettings::reset() {
   // MKS UI controller
   //
   TERN_(DGUS_LCD_UI_MKS, MKS_reset_settings());
+
+  //
+  // LED backlight color
+  //
+  #if ENABLED(LED_USER_PRESET_STARTUP)
+    LEDLights::led_user_preset.r = 255;
+    LEDLights::led_user_preset.g = 255;
+    LEDLights::led_user_preset.b = 255;
+    TERN_(HAS_WHITE_LED, LEDLights::led_user_preset.w = 255);
+    TERN_(NEOPIXEL_LED, LEDLights::led_user_preset.i = 255);
+  #endif
 
   postprocess();
 
